@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Baytee Beauty — Facial Treatment Dashboard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: #fdf6f8;
+    color: #1f2328;
+    min-height: 100vh;
+    padding: 0 0 40px;
+  }
+
+  /* ── Top Banner ── */
+  .spa-banner {
+    background: linear-gradient(135deg, #7b2d4e 0%, #c0527a 60%, #e8899a 100%);
+    padding: 22px 24px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .spa-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .spa-logo-wrap {
+    width: 60px; height: 60px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 16px;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .spa-logo-wrap svg { width: 42px; height: 42px; }
+  .spa-name   { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: .4px; line-height: 1.1; }
+  .spa-tagline{ font-size: 12px; color: rgba(255,255,255,.75); margin-top: 3px; letter-spacing: .3px; }
+  .spa-badge  {
+    font-size: 11px; font-weight: 600;
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.3);
+    color: #fff; padding: 5px 14px; border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* ── Header (inner) ── */
+  .header {
+    max-width: 960px;
+    margin: 0 auto 28px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .header-logo {
+    width: 42px; height: 42px;
+    background: #c0527a;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .header-logo svg { width: 24px; height: 24px; fill: #fff; }
+  .header-title { font-size: 17px; font-weight: 700; color: #7b2d4e; }
+  .header-sub   { font-size: 12px; color: #57606a; margin-top: 1px; }
+
+  /* ── Grid ── */
+  .grid {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 700px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    .card--full { grid-column: 1 / -1; }
+  }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border: 1px solid #f0d0da;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid #fce8ee;
+  }
+  .card-icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-blue   { background: #fdf0f4; }
+  .icon-rose   { background: #fff1f2; }
+  .icon-purple { background: #fdf0f4; }
+
+  .card-icon svg { width: 18px; height: 18px; }
+  .card-title  { font-size: 14px; font-weight: 700; color: #1f2328; }
+  .card-subtitle { font-size: 11px; color: #57606a; margin-top: 1px; }
+  .card-body   { padding: 18px 20px; }
+
+  /* ── Profile row ── */
+  .profile-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .avatar {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f4a7b9, #c0527a);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .profile-name  { font-size: 16px; font-weight: 700; }
+  .profile-id    { font-size: 11px; color: #57606a; margin-top: 2px; }
+  .badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+    margin-top: 5px;
+  }
+  .badge-active { background: #dcfce7; color: #15803d; }
+
+  /* ── Info rows ── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+  }
+  .info-item label {
+    display: block;
+    font-size: 10px; font-weight: 600;
+    color: #57606a; text-transform: uppercase; letter-spacing: .5px;
+    margin-bottom: 3px;
+  }
+  .info-item span { font-size: 13px; color: #1f2328; }
+
+  /* ── Divider ── */
+  .divider { border: none; border-top: 1px solid #f0f1f3; margin: 14px 0; }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 10px; font-weight: 700;
+    color: #57606a; text-transform: uppercase; letter-spacing: .6px;
+    margin-bottom: 8px;
+  }
+
+  /* ── Tag chips ── */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 11px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px;
+    border: 1px solid transparent;
+  }
+  .tag-skin    { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+  .tag-allergy { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+  .tag-concern { background: #e0f2fe; color: #0c4a6e; border-color: #7dd3fc; }
+  .tag-med     { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+
+  /* ── Treatment steps ── */
+  .step-list { display: flex; flex-direction: column; gap: 10px; }
+  .step {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 12px;
+    background: #f7f8fa; border-radius: 10px;
+    border: 1px solid #e5e7eb;
+  }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #c0527a; color: #fff;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step-name { font-size: 13px; font-weight: 600; color: #1f2328; }
+  .step-desc { font-size: 11px; color: #57606a; margin-top: 2px; }
+  .step-dur  {
+    margin-left: auto; font-size: 10px; font-weight: 600;
+    color: #c0527a; background: #fdf0f4; padding: 2px 8px;
+    border-radius: 20px; white-space: nowrap; align-self: flex-start;
+  }
+
+  /* ── Appointment card ── */
+  .appt-hero {
+    background: linear-gradient(135deg, #7b2d4e 0%, #c0527a 100%);
+    border-radius: 10px;
+    padding: 16px;
+    color: #fff;
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 16px;
+  }
+  .appt-date-box {
+    background: rgba(255,255,255,.18);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center; flex-shrink: 0;
+  }
+  .appt-day   { font-size: 26px; font-weight: 800; line-height: 1; }
+  .appt-month { font-size: 11px; font-weight: 600; opacity: .85; margin-top: 2px; }
+  .appt-label { font-size: 15px; font-weight: 700; }
+  .appt-time  { font-size: 12px; opacity: .85; margin-top: 3px; }
+  .appt-staff { font-size: 11px; opacity: .75; margin-top: 2px; }
+
+  /* ── Progress tracker ── */
+  .progress-track { margin-bottom: 6px; }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: #57606a; margin-bottom: 5px;
+  }
+  .progress-bar-bg {
+    background: #e5e7eb; border-radius: 20px; height: 7px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; border-radius: 20px;
+    background: linear-gradient(90deg, #7b2d4e, #c0527a);
+  }
+
+  /* ── Checklist ── */
+  .checklist { display: flex; flex-direction: column; gap: 7px; }
+  .check-item {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 13px; color: #1f2328;
+  }
+  .check-item.done { color: #57606a; }
+  .check-circle {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid #e5e7eb;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .check-circle.checked {
+    background: #c0527a; border-color: #c0527a;
+  }
+  .check-circle.checked::after {
+    content: "";
+    width: 6px; height: 9px;
+    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    transform: rotate(40deg) translateY(-1px);
+    display: block;
+  }
+  .check-item.done span { text-decoration: line-through; }
+
+  /* ── Footer ── */
+  .footer {
+    max-width: 960px; margin: 32px auto 0;
+    text-align: center; font-size: 11px; color: #8b949e;
+    border-top: 1px solid #e5e7eb; padding-top: 16px;
+  }
+
+  @media (max-width: 699px) {
+    .two-col { grid-template-columns: 1fr !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Spa Banner ── -->
+<div class="spa-banner">
+  <div class="spa-brand">
+    <div class="spa-logo-wrap">
+      <!-- Rose SVG Logo -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- Stem -->
+        <line x1="50" y1="75" x2="50" y2="95" stroke="#a8d5a2" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="50" y1="85" x2="40" y2="75" stroke="#a8d5a2" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Leaves -->
+        <ellipse cx="37" cy="72" rx="9" ry="5" fill="#a8d5a2" transform="rotate(-40 37 72)" opacity="0.9"/>
+        <ellipse cx="63" cy="78" rx="9" ry="5" fill="#a8d5a2" transform="rotate(40 63 78)" opacity="0.9"/>
+        <!-- Outer petals -->
+        <ellipse cx="50" cy="32" rx="10" ry="18" fill="#f4a7b9" opacity="0.85" transform="rotate(0 50 50)"/>
+        <ellipse cx="50" cy="32" rx="10" ry="18" fill="#f4a7b9" opacity="0.85" transform="rotate(45 50 50)"/>
+        <ellipse cx="50" cy="32" rx="10" ry="18" fill="#f4a7b9" opacity="0.85" transform="rotate(90 50 50)"/>
+        <ellipse cx="50" cy="32" rx="10" ry="18" fill="#f4a7b9" opacity="0.85" transform="rotate(135 50 50)"/>
+        <ellipse cx="50" cy="32" rx="10" ry="18" fill="#e8899a" opacity="0.75" transform="rotate(22.5 50 50)"/>
+        <ellipse cx="50" cy="32" rx="10" ry="18" fill="#e8899a" opacity="0.75" transform="rotate(67.5 50 50)"/>
+        <ellipse cx="50" cy="32" rx="10" ry="18" fill="#e8899a" opacity="0.75" transform="rotate(112.5 50 50)"/>
+        <ellipse cx="50" cy="32" rx="10" ry="18" fill="#e8899a" opacity="0.75" transform="rotate(157.5 50 50)"/>
+        <!-- Inner petals -->
+        <ellipse cx="50" cy="38" rx="7" ry="12" fill="#c0527a" opacity="0.9" transform="rotate(0 50 50)"/>
+        <ellipse cx="50" cy="38" rx="7" ry="12" fill="#c0527a" opacity="0.9" transform="rotate(60 50 50)"/>
+        <ellipse cx="50" cy="38" rx="7" ry="12" fill="#c0527a" opacity="0.9" transform="rotate(120 50 50)"/>
+        <!-- Centre -->
+        <circle cx="50" cy="50" r="10" fill="#7b2d4e"/>
+        <circle cx="50" cy="50" r="6"  fill="#9e3d62"/>
+        <circle cx="50" cy="50" r="3"  fill="#c0527a"/>
+      </svg>
+    </div>
+    <div>
+      <div class="spa-name">Baytee Beauty</div>
+      <div class="spa-tagline">✦ Premium Facial Treatment &amp; Skincare Spa</div>
+    </div>
+  </div>
+  <div class="spa-badge">Personal Treatment Dashboard</div>
+</div>
+
+<!-- ── Section Header ── -->
+<div class="header">
+  <div class="header-logo">
+    <!-- Small rose icon -->
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="4" fill="#fff" opacity="0.9"/>
+      <ellipse cx="12" cy="7"  rx="2.5" ry="4.5" fill="#fff" opacity="0.8" transform="rotate(0 12 12)"/>
+      <ellipse cx="12" cy="7"  rx="2.5" ry="4.5" fill="#fff" opacity="0.8" transform="rotate(60 12 12)"/>
+      <ellipse cx="12" cy="7"  rx="2.5" ry="4.5" fill="#fff" opacity="0.8" transform="rotate(120 12 12)"/>
+      <ellipse cx="12" cy="7"  rx="2.5" ry="4.5" fill="#fff" opacity="0.7" transform="rotate(30 12 12)"/>
+      <ellipse cx="12" cy="7"  rx="2.5" ry="4.5" fill="#fff" opacity="0.7" transform="rotate(90 12 12)"/>
+      <ellipse cx="12" cy="7"  rx="2.5" ry="4.5" fill="#fff" opacity="0.7" transform="rotate(150 12 12)"/>
+    </svg>
+  </div>
+  <div>
+    <div class="header-title">Facial Treatment Dashboard</div>
+    <div class="header-sub">Personal Care Portal — Baytee Beauty Spa</div>
+  </div>
+</div>
+
+<!-- ── Grid ── -->
+<div class="grid">
+
+  <!-- ══════════════════════════════════════
+       CARD 1 — Customer Details,
+                Skin Condition & Medical History
+  ══════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#3b82d4"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <div>
+        <div class="card-title">Customer Details</div>
+        <div class="card-subtitle">Skin condition &amp; medical history</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Profile -->
+      <div class="profile-row">
+        <div class="avatar">N</div>
+        <div>
+          <div class="profile-name">Nurul Aisyah bt. Kamal</div>
+          <div class="profile-id">Client ID: #CA-20847 · Since Jan 2023</div>
+          <span class="badge badge-active">● Active</span>
+        </div>
+      </div>
+
+      <!-- Info grid -->
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Age</label><span>29 years old</span>
+        </div>
+        <div class="info-item">
+          <label>Contact</label><span>+60 12-345 6789</span>
+        </div>
+        <div class="info-item">
+          <label>Skin Type</label><span>Combination</span>
+        </div>
+        <div class="info-item">
+          <label>Fitzpatrick</label><span>Type III</span>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- Skin Condition -->
+      <div class="section-label">Skin Condition</div>
+      <div class="tags" style="margin-bottom:14px">
+        <span class="tag tag-concern">Acne-Prone (T-Zone)</span>
+        <span class="tag tag-concern">Hyperpigmentation</span>
+        <span class="tag tag-concern">Enlarged Pores</span>
+        <span class="tag tag-concern">Dullness</span>
+      </div>
+
+      <!-- Allergies -->
+      <div class="section-label">Allergies</div>
+      <div class="tags" style="margin-bottom:14px">
+        <span class="tag tag-allergy">⚠ Salicylic Acid</span>
+        <span class="tag tag-allergy">⚠ Fragrance</span>
+      </div>
+
+      <!-- Medical History -->
+      <div class="section-label">Medical History</div>
+      <div class="tags">
+        <span class="tag tag-med">Rosacea (mild)</span>
+        <span class="tag tag-med">Eczema (past)</span>
+        <span class="tag tag-skin">No active medication</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       CARD 2 — Treatment After Consultation
+  ══════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-rose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#f43f5e"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 11l3 3L22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5
+                   a2 2 0 0 1 2-2h11"/>
+        </svg>
+      </div>
+      <div>
+        <div class="card-title">Treatment After Consultation</div>
+        <div class="card-subtitle">Session on 10 July 2025 · Dr. Hidayah</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Progress bar -->
+      <div class="progress-track" style="margin-bottom:16px">
+        <div class="progress-label">
+          <span>Treatment Progress</span>
+          <span style="font-weight:700;color:#c0527a">Session 4 of 6</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" style="width:66%"></div>
+        </div>
+        <div style="font-size:10px;color:#57606a;margin-top:4px;text-align:right">
+          66% complete
+        </div>
+      </div>
+
+      <!-- Treatment steps -->
+      <div class="section-label">Treatment Performed</div>
+      <div class="step-list">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div style="flex:1">
+            <div class="step-name">Double Cleanse</div>
+            <div class="step-desc">Oil cleanser + gentle foam cleanser</div>
+          </div>
+          <div class="step-dur">10 min</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div style="flex:1">
+            <div class="step-name">Ultrasonic Exfoliation</div>
+            <div class="step-desc">Deep pore cleansing &amp; dead cell removal</div>
+          </div>
+          <div class="step-dur">15 min</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div style="flex:1">
+            <div class="step-name">Brightening Serum Infusion</div>
+            <div class="step-desc">Niacinamide 10% + Vitamin C complex</div>
+          </div>
+          <div class="step-dur">20 min</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div style="flex:1">
+            <div class="step-name">LED Light Therapy</div>
+            <div class="step-desc">Blue (acne) + Red (healing) 630nm</div>
+          </div>
+          <div class="step-dur">15 min</div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div style="flex:1">
+            <div class="step-name">Hydrating Mask + SPF Finish</div>
+            <div class="step-desc">Hyaluronic acid mask, SPF50 application</div>
+          </div>
+          <div class="step-dur">15 min</div>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- Therapist note -->
+      <div class="section-label">Therapist Note</div>
+      <div style="font-size:12px;color:#374151;background:#f7f8fa;
+                  border-radius:8px;padding:10px 12px;
+                  border-left:3px solid #3b82d4;line-height:1.6">
+        Skin showing visible improvement — hyperpigmentation reduced ~30%.
+        Avoid retinol for next 5 days. Recommend home-use Niacinamide serum
+        twice daily.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       CARD 3 — Treatment Plan & Next Appointment
+  ══════════════════════════════════════ -->
+  <div class="card card--full">
+    <div class="card-header">
+      <div class="card-icon icon-purple">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#7c5cd8"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8"  y1="2" x2="8"  y2="6"/>
+          <line x1="3"  y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div>
+        <div class="card-title">Treatment Plan &amp; Next Appointment</div>
+        <div class="card-subtitle">6-session brightening &amp; acne control programme</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"
+           class="two-col">
+
+        <!-- Left: Plan milestones checklist -->
+        <div>
+          <div class="section-label" style="margin-bottom:10px">Plan Milestones</div>
+          <div class="checklist">
+            <div class="check-item done">
+              <div class="check-circle checked"></div>
+              <span>Initial consultation &amp; skin analysis</span>
+            </div>
+            <div class="check-item done">
+              <div class="check-circle checked"></div>
+              <span>Session 1 — Deep cleanse &amp; hydration boost</span>
+            </div>
+            <div class="check-item done">
+              <div class="check-circle checked"></div>
+              <span>Session 2 — Exfoliation &amp; brightening</span>
+            </div>
+            <div class="check-item done">
+              <div class="check-circle checked"></div>
+              <span>Session 3 — LED therapy + serum</span>
+            </div>
+            <div class="check-item done">
+              <div class="check-circle checked"></div>
+              <span>Session 4 — Ultrasonic + full protocol</span>
+            </div>
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <span>Session 5 — Peeling &amp; spot treatment</span>
+            </div>
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <span>Session 6 — Final maintenance &amp; review</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Next appointment + reminders -->
+        <div>
+          <div class="section-label" style="margin-bottom:10px">Next Appointment</div>
+
+          <div class="appt-hero">
+            <div class="appt-date-box">
+              <div class="appt-day">24</div>
+              <div class="appt-month">JUL 2025</div>
+            </div>
+            <div>
+              <div class="appt-label">Session 5 — Peeling &amp; Spot Treatment</div>
+              <div class="appt-time">⏰ Thursday · 2:30 PM – 4:00 PM</div>
+              <div class="appt-staff">👩‍⚕️ Dr. Hidayah Rashid</div>
+            </div>
+          </div>
+
+          <div class="section-label">Reminders Before Appointment</div>
+          <div class="checklist">
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <span>Avoid sunburn 3 days prior</span>
+            </div>
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <span>No retinol / AHA 5 days before</span>
+            </div>
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <span>Arrive with clean, makeup-free skin</span>
+            </div>
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <span>Hydrate well the day before</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">🌹 Baytee Beauty &nbsp;·&nbsp; Premium Facial Treatment &amp; Skincare Spa &nbsp;·&nbsp; Made with IBM Bob</div>
+</body>
+</html>
